@@ -103,21 +103,29 @@
   .slide { position: relative; flex: 0 0 100%; scroll-snap-align: start; height: min(78vh, 720px); min-height: 460px; overflow: hidden; background: #2E3A3C; color: #fff; }
   .slide img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .slide::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(15,22,24,.62) 0%, rgba(15,22,24,.25) 55%, rgba(15,22,24,0) 100%); }
-  .slide .txt { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
-  .slide h1, .slide h2 { font-size: clamp(2.3rem, 5.6vw, 4.4rem); font-weight: 500; line-height: 1.03; letter-spacing: -0.015em; margin: 0; max-width: 13ch; }
-  .slide p { font-size: clamp(1.05rem, 1.6vw, 1.25rem); margin: 16px 0 28px; max-width: 30em; color: #EEF2F1; }
-  .slide .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  .slide.brand-slide { background: var(--teal); }
-  .slide.brand-slide::after { background: none; }
+  .slide .txt { position: relative; z-index: 1; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .slide h1, .slide h2 { font-size: clamp(2.3rem, 5.6vw, 4.4rem); font-weight: 500; line-height: 1.03; letter-spacing: -0.015em; margin: 0 auto; max-width: 16ch; }
+  .slide p { font-size: clamp(1.05rem, 1.6vw, 1.25rem); margin: 16px auto 28px; max-width: 32em; color: #EEF2F1; }
+  .slide .row { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .slide::after { background: radial-gradient(ellipse at center, rgba(15,22,24,.55) 0%, rgba(15,22,24,.35) 60%, rgba(15,22,24,.2) 100%) !important; }
+  /* Portada con la foto de sala: fondo claro, texto oscuro */
+  .slide.brand-slide { background: #EEECE8; color: var(--ink); }
+  .slide.brand-slide img { object-position: center 65%; }
+  .slide.brand-slide::after { background: radial-gradient(ellipse 70% 60% at center 42%, rgba(255,255,255,.72) 0%, rgba(255,255,255,.45) 55%, rgba(255,255,255,.1) 100%) !important; }
+  .slide.brand-slide p { color: #3A4447; }
+  .slide.brand-slide .btn-dark { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .slide.brand-slide .btn-dark:hover { background: #000; border-color: #000; }
+  .slide.brand-slide .btn-outline { background: rgba(255,255,255,.55); color: var(--ink); border-color: var(--ink); }
+  .slide.brand-slide .btn-outline:hover { background: var(--ink); color: #fff; }
   .dots { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: center; gap: 10px; z-index: 2; }
-  .dots button { width: 34px; height: 4px; border: 0; padding: 0; background: rgba(255,255,255,.45); cursor: pointer; }
-  .dots button[aria-current="true"] { background: #fff; }
+  .dots button { width: 34px; height: 4px; border: 0; padding: 0; background: rgba(255,255,255,.6); box-shadow: 0 0 0 1px rgba(34,42,44,.35); cursor: pointer; }
+  .dots button[aria-current="true"] { background: var(--ink); box-shadow: 0 0 0 1px rgba(255,255,255,.8); }
   .arrows button { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 48px; height: 48px; border-radius: 50%; border: 0; background: rgba(255,255,255,.85); color: var(--ink); font-size: 24px; cursor: pointer; }
   .arrows .prev { left: 18px; } .arrows .next { right: 18px; }
   @media (max-width: 760px) {
     .slide { height: 74vh; min-height: 420px; }
-    .slide::after { background: linear-gradient(0deg, rgba(15,22,24,.75) 0%, rgba(15,22,24,.2) 60%, rgba(15,22,24,.05) 100%); }
-    .slide .txt { justify-content: flex-end; padding-bottom: 64px; }
+    .slide .txt { padding-bottom: 30px; }
+    .slide.brand-slide img { object-position: 30% 70%; }
     .slide .row .btn { flex: 1 1 auto; }
     .arrows { display: none; }
   }
@@ -341,10 +349,11 @@
   <section class="hero" aria-label="Destacados">
     <div class="slides" id="slides">
       <div class="slide brand-slide">
+        <img src="portada.webp" srcset="portada-m.webp 900w, portada.webp 1920w" sizes="100vw" width="1920" height="1537" alt="" fetchpriority="high" decoding="async">
         <div class="wrap txt">
           <h1>Muebles hechos a la medida de tu espacio</h1>
           <p id="heroLead">Salas, comedores, alcobas y sofás con tus medidas, la tela que elijas y el estilo de tu casa.</p>
-          <div class="row"><a class="btn btn-light js-cotizar" href="#">Pide tu cotización</a><a class="btn btn-light btn-ghost-w" href="#trabajos" style="background:transparent;color:#fff">Ver trabajos</a></div>
+          <div class="row"><a class="btn btn-dark js-cotizar" href="#">Pide tu cotización</a><a class="btn btn-outline" href="#trabajos">Ver trabajos</a></div>
         </div>
       </div>
     </div>
@@ -639,25 +648,23 @@
     const feat = works.filter((w) => w.featured);
     const pick = (feat.length ? feat : works).slice(0, 5);
     if (!pick.length) return;
-    const first = $("slides").firstElementChild;
-    const heroText = first.querySelector(".txt").innerHTML;
-    $("slides").innerHTML = pick.map((w, i) => {
+    $("slides").insertAdjacentHTML("beforeend", pick.map((w, i) => {
       const c = catOf(w.category);
-      return `<div class="slide" role="group" aria-roledescription="diapositiva" aria-label="${i + 1} de ${pick.length}">
-        ${img({ ...w.photos[0], thumb: w.photos[0].full }, false, w.title, i === 0)}
-        <div class="wrap txt">${i === 0 ? heroText : `
+      return `<div class="slide" role="group" aria-roledescription="diapositiva" aria-label="${i + 2} de ${pick.length + 1}">
+        ${img({ ...w.photos[0], thumb: w.photos[0].full }, false, w.title, false)}
+        <div class="wrap txt">
           <h2>${esc(c.hero)}</h2>
           <p>${esc(w.title)}${w.city ? ", " + esc(w.city) : ""}</p>
-          <div class="row"><a class="btn btn-light js-cotizar" data-custom="1" href="${esc(cotizarLink(w.category, w.title))}">Cotizar uno así</a><button class="btn btn-light" type="button" data-open="${w.id}" style="background:transparent;color:#fff">Ver fotos</button></div>`}
+          <div class="row"><a class="btn btn-light js-cotizar" data-custom="1" href="${esc(cotizarLink(w.category, w.title))}">Cotizar uno así</a><button class="btn btn-light" type="button" data-open="${w.id}" style="background:transparent;color:#fff">Ver fotos</button></div>
         </div></div>`;
-    }).join("");
+    }).join(""));
+    const total = pick.length + 1;
     setLinks();
-    if (pick.length < 2) return;
-    $("dots").innerHTML = pick.map((_, i) => `<button type="button" aria-label="Ir a la diapositiva ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
+    $("dots").innerHTML = Array.from({ length: total }, (_, i) => `<button type="button" aria-label="Ir a la diapositiva ${i + 1}"${i === 0 ? ' aria-current="true"' : ""}></button>`).join("");
     $("arrows").hidden = false;
     const track = $("slides");
     const cur = () => Math.round(track.scrollLeft / track.clientWidth);
-    const goTo = (i) => track.scrollTo({ left: ((i + pick.length) % pick.length) * track.clientWidth, behavior: reduced ? "auto" : "smooth" });
+    const goTo = (i) => track.scrollTo({ left: ((i + total) % total) * track.clientWidth, behavior: reduced ? "auto" : "smooth" });
     track.addEventListener("scroll", () => requestAnimationFrame(() => {
       [...$("dots").children].forEach((d, i) => d.setAttribute("aria-current", String(i === cur())));
     }), { passive: true });
