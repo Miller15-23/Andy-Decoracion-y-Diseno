@@ -14,7 +14,6 @@ Abre `site-config.js` y llena:
 4. En 1 o 2 minutos tu página estará en `https://TU-USUARIO.github.io/andy-web/`.
 
 ## 3. Después de publicarla
-- En `robots.txt` y `sitemap.xml` cambia `TU-USUARIO` y `TU-REPOSITORIO` por los tuyos.
 - Registra la página en Google Search Console y envía el `sitemap.xml`.
 
 ## 4. Subir trabajos
